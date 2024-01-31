@@ -18,7 +18,8 @@ class LRUCache(BaseCaching):
         if not key or not item:
             return
 
-        self.sort_based_on_lru(key)
+        if self.sort_based_on_lru(key):
+            return
 
         if len(self.cache_data) >= self.MAX_ITEMS:
             self.cache_data.pop(self.lru_keys[0])
@@ -30,13 +31,16 @@ class LRUCache(BaseCaching):
 
     def get(self, key) -> Any:
         """ Get data from LRU cache system"""
-        self.sort_based_on_lru(key)
+        if self.sort_based_on_lru(key):
+            return
         return self.cache_data.get(key, None)
 
-    def sort_based_on_lru(self, key):
+    def sort_based_on_lru(self, key) -> bool:
         """ Rearrange the lru"""
         if key in self.lru_keys:
             idx = self.lru_keys.index(key)
             self.lru_keys[idx], self.lru_keys[-1] = (
                 self.lru_keys[-1], self.lru_keys[idx]
             )
+            return True
+        return False
