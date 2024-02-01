@@ -17,6 +17,14 @@ class FIFOCache(BaseCaching):
         """ Store the data in FIFO policy"""
         if key is None or item is None:
             return
+
+        if key in self.queue:
+            self.cache_data[key] = item
+
+            self.queue.remove(key)
+            self.queue.append(key)
+            return
+
         if len(self.cache_data) >= self.MAX_ITEMS:
             discard_element = self.queue.pop(0)
             self.cache_data.pop(discard_element)
@@ -27,5 +35,4 @@ class FIFOCache(BaseCaching):
 
     def get(self, key) -> Any:
         """ Get data from a FIFO cache system"""
-        if key:
-            return self.cache_data.get(key, None)
+        return self.cache_data.get(key, None)
