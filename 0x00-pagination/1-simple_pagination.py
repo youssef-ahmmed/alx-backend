@@ -7,8 +7,8 @@ from typing import Tuple, List
 
 def index_range(page: int, page_size: int) -> Tuple[int, int]:
     """Returns the start and end indices of a page"""
-    start_idx = (page - 1) * page_size
-    end_idx = page * page_size
+    start_idx: int = (page - 1) * page_size
+    end_idx: int = page * page_size
 
     return start_idx, end_idx
 
@@ -41,5 +41,8 @@ class Server:
         assert isinstance(page_size, int) and page_size > 0
 
         start_idx, end_idx = index_range(page, page_size)
+
+        if start_idx >= len(self.dataset()):
+            return []
 
         return self.__dataset[start_idx:end_idx]
