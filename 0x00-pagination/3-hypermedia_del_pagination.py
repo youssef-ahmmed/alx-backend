@@ -59,7 +59,8 @@ class Server:
         [remaining_indices.append(idx) for idx in indexed_data_keys
          if idx >= index and len(remaining_indices) <= page_size]
         data = [indexed_data.get(key) for key in remaining_indices]
-        next_index = remaining_indices[-1] if len(remaining_indices) - page_size == 1 else None
+        next_index = (remaining_indices[-1]
+                      if len(remaining_indices) - page_size == 1 else None)
 
         return {
             'index': index,
