@@ -19,7 +19,7 @@ babel = Babel(app)
 
 
 @babel.localeselector
-def get_locale():
+def get_locale() -> str:
     """Get locale"""
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
@@ -27,9 +27,6 @@ def get_locale():
 @app.route('/', strict_slashes=False)
 def index() -> str:
     """Default route"""
-    # home_title = gettext("Welcome to Holberton")
-    # home_header = gettext("Hello world!")
-
     return render_template('3-index.html')
 
 
