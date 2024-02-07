@@ -27,24 +27,6 @@ users = {
 }
 
 
-@babel.localeselector
-def get_locale() -> str:
-    """Get locale"""
-    url_locale = request.args.get('locale', '')
-    if url_locale and url_locale in Config.LANGUAGES:
-        return url_locale
-
-    user_locale = g.user.get('locale')
-    if user_locale and user_locale in Config.LANGUAGES:
-        return user_locale
-
-    header_locale = request.headers.get('locale', '')
-    if header_locale and user_locale in Config.LANGUAGES:
-        return header_locale
-
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
-
-
 def get_user() -> Union[Dict, None]:
     """Returns a user dictionary"""
     login_as = request.args.get('login_as')
@@ -57,11 +39,28 @@ def before_request() -> None:
     g.user = get_user()
 
 
+@babel.localeselector
+def get_locale() -> str:
+    """Get locale"""
+    url_locale = request.args.get('locale', '')
+    if url_locale and url_locale in Config.LANGUAGES:
+        return url_locale
+
+    if g.user and g.user.get('locale') in Config.LANGUAGES:
+        return g.user.get('locale')
+
+    header_locale = request.headers.get('locale', '')
+    if header_locale and header_locale in Config.LANGUAGES:
+        return header_locale
+
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
 @app.route('/', strict_slashes=False)
 def index() -> str:
     """Default route"""
     username = g.user.get('name') if g.user else None
-    return render_template('6-index.html', username=username)
+    return render_template('5-index.html', username=username)
 
 
 if __name__ == '__main__':
