@@ -8,6 +8,8 @@ from flask_babel import Babel
 
 class Config:
     """Babel basic configurations"""
+
+    DEBUG = True
     LANGUAGES = ['en', 'fr']
     BABEL_DEFAULT_LOCALE = 'en'
     BABEL_DEFAULT_TIMEZONE = 'UTC'
@@ -58,7 +60,7 @@ def before_request() -> None:
 @app.route('/', strict_slashes=False)
 def index() -> str:
     """Default route"""
-    username = g.user.get('name')
+    username = g.user.get('name') if g.user else None
     return render_template('6-index.html', username=username)
 
 
