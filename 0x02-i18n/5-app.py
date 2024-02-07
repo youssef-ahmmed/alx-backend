@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Mock logging in"""
-from typing import Dict
+from typing import Dict, Union
 
 from flask import Flask, request, render_template, g
 from flask_babel import Babel
@@ -35,25 +35,23 @@ def get_locale() -> str:
     return request.accept_languages.best_match(app.config['LANGUAGES'])
 
 
-@babel.localeselector
-def get_user() -> Dict:
+def get_user() -> Union[Dict, None]:
     """Returns a user dictionary"""
-    login_as = request.args.get('login_as', None)
-    return users.get(int(login_as) if login_as else None)
+    login_as = request.args.get('login_as')
+    return users.get(int(login_as)) if login_as else None
 
 
 @app.before_request
 def before_request() -> None:
     """Set user as a global"""
-    user = get_user()
-    g.user = user if user else None
+    g.user = get_user()
 
 
 @app.route('/', strict_slashes=False)
 def index() -> str:
     """Default route"""
-    user = g.user.get('name') if g.user else None
-    return render_template('5-index.html', user=user)
+    username = g.user.get('name')
+    return render_template('5-index.html', username=username)
 
 
 if __name__ == '__main__':
