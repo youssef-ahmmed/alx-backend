@@ -8,6 +8,8 @@ from flask_babel import Babel
 
 class Config:
     """Babel basic configurations"""
+
+    DEBUG = True
     LANGUAGES = ['en', 'fr']
     BABEL_DEFAULT_LOCALE = 'en'
     BABEL_DEFAULT_TIMEZONE = 'UTC'
@@ -25,16 +27,6 @@ users = {
 }
 
 
-@babel.localeselector
-def get_locale() -> str:
-    """Get locale"""
-    locale = request.args.get('locale', '').strip()
-    if locale and locale in Config.LANGUAGES:
-        return locale
-
-    return request.accept_languages.best_match(app.config['LANGUAGES'])
-
-
 def get_user() -> Union[Dict, None]:
     """Returns a user dictionary"""
     login_as = request.args.get('login_as')
@@ -47,10 +39,20 @@ def before_request() -> None:
     g.user = get_user()
 
 
+@babel.localeselector
+def get_locale() -> str:
+    """Get locale"""
+    locale = request.args.get('locale', '')
+    if locale in Config.LANGUAGES:
+        return locale
+
+    return request.accept_languages.best_match(app.config['LANGUAGES'])
+
+
 @app.route('/', strict_slashes=False)
 def index() -> str:
     """Default route"""
-    username = g.user.get('name')
+    username = g.user.get('name') if g.user else None
     return render_template('5-index.html', username=username)
 
 
